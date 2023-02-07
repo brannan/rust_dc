@@ -62,7 +62,7 @@ impl State {
         }
     }
 
-    fn reset_game_state(&mut self){
+    fn reset_game_state(&mut self) {
         self.ecs = World::default();
         self.resources = Resources::default();
         let mut rng = RandomNumberGenerator::new();
@@ -108,7 +108,12 @@ impl State {
     fn victory(&mut self, ctx: &mut BTerm) {
         ctx.set_active_console(2);
         ctx.print_color_centered(2, GREEN, BLACK, "You have won!");
-        ctx.print_color_centered(4, WHITE, BLACK, "You put on the Amulet of Yala and feel it's power.");
+        ctx.print_color_centered(
+            4,
+            WHITE,
+            BLACK,
+            "You put on the Amulet of Yala and feel it's power.",
+        );
         ctx.print_color_centered(5, WHITE, BLACK, "Your town is saved.");
         ctx.print_color_centered(9, GREEN, BLACK, "Press 1 to play again.");
 
@@ -141,7 +146,7 @@ impl GameState for State {
                 .monster_systems
                 .execute(&mut self.ecs, &mut self.resources),
             TurnState::GameOver => self.game_over(ctx),
-            TurnState::Victory => self.victory(ctx) ,
+            TurnState::Victory => self.victory(ctx),
         }
         // self.systems.execute(&mut self.ecs, &mut self.resources);
 

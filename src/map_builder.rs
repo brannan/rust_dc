@@ -36,7 +36,8 @@ impl MapBuilder {
                 .enumerate()
                 .filter(|(_, dist)| *dist < UNREACHABLE)
                 .max_by(|a, b| a.1.partial_cmp(b.1).unwrap())
-                .unwrap().0,
+                .unwrap()
+                .0,
         );
 
         mb
