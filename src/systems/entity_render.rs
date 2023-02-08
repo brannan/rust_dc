@@ -5,7 +5,7 @@ use crate::prelude::*;
 #[read_component(Render)]
 #[read_component(FieldOfView)]
 #[read_component(Player)]
-pub fn entity_render(ecs: &SubWorld, #[resource] camera: &Camera) {
+pub fn entity_render(#[resource] camera: &Camera, ecs: &SubWorld) {
     let mut renderables = <(&Point, &Render)>::query();
     let mut fov = <&FieldOfView>::query().filter(component::<Player>());
     let mut draw_batch = DrawBatch::new();

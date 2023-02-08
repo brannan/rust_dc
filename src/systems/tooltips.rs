@@ -3,7 +3,6 @@ use crate::prelude::*;
 #[system]
 #[read_component(Point)]
 #[read_component(Name)]
-#[read_component(Health)]
 #[read_component(FieldOfView)]
 #[read_component(Player)]
 pub fn tooltips(ecs: &SubWorld, #[resource] mouse_pos: &Point, #[resource] camera: &Camera) {

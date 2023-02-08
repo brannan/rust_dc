@@ -82,22 +82,25 @@ impl State {
 
     fn game_over(&mut self, ctx: &mut BTerm) {
         ctx.set_active_console(2);
-        ctx.print_color_centered(2, RED, BLACK, "Your quest has ended");
+        ctx.print_color_centered(2, RED, BLACK, "Your quest has ended.");
         ctx.print_color_centered(
             4,
             WHITE,
             BLACK,
-            "Slain by a monster, your hero's journey has come to a \
-        premature end.",
+            "Slain by a monster, your hero's journey has come to a premature end.",
         );
         ctx.print_color_centered(
             5,
             WHITE,
             BLACK,
-            "The Amulet of Yala remains unclaimed, and your home town \
-        is not saved",
+            "The Amulet of Yala remains unclaimed, and your home town is not saved.",
         );
-        ctx.print_color_centered(8, YELLOW, BLACK, "Don't worry, you can always try again.");
+        ctx.print_color_centered(
+            8,
+            YELLOW,
+            BLACK,
+            "Don't worry, you can always try again with a new hero.",
+        );
         ctx.print_color_centered(9, GREEN, BLACK, "Press 1 to play again.");
 
         if let Some(VirtualKeyCode::Key1) = ctx.key {
@@ -114,9 +117,13 @@ impl State {
             BLACK,
             "You put on the Amulet of Yala and feel it's power.",
         );
-        ctx.print_color_centered(5, WHITE, BLACK, "Your town is saved.");
+        ctx.print_color_centered(
+            5,
+            WHITE,
+            BLACK,
+            "Your town is saved, and you can return to your normal life.",
+        );
         ctx.print_color_centered(9, GREEN, BLACK, "Press 1 to play again.");
-
         if let Some(VirtualKeyCode::Key1) = ctx.key {
             self.reset_game_state();
         }
@@ -148,24 +155,22 @@ impl GameState for State {
             TurnState::GameOver => self.game_over(ctx),
             TurnState::Victory => self.victory(ctx),
         }
-        // self.systems.execute(&mut self.ecs, &mut self.resources);
-
         render_draw_buffer(ctx).expect("Render error");
     }
 }
 
 fn main() -> BError {
-    let context = BTermBuilder::new() // (1)
+    let context = BTermBuilder::new()
         .with_title("Dungeon Crawler")
         .with_fps_cap(30.0)
-        .with_dimensions(DISPLAY_WIDTH, DISPLAY_HEIGHT) // (2)
-        .with_tile_dimensions(32, 32) // (3)
-        .with_resource_path("resources/") // (4)
-        .with_font("dungeonfont.png", 32, 32) // (5)
-        .with_font("terminal8x8.png", 8, 8) // (5)
-        .with_simple_console(DISPLAY_WIDTH, DISPLAY_HEIGHT, "dungeonfont.png") // (6)
-        .with_simple_console_no_bg(DISPLAY_WIDTH, DISPLAY_HEIGHT, "dungeonfont.png") // (7)
-        .with_simple_console_no_bg(SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2, "terminal8x8.png") // (6)
+        .with_dimensions(DISPLAY_WIDTH, DISPLAY_HEIGHT)
+        .with_tile_dimensions(32, 32)
+        .with_resource_path("resources/")
+        .with_font("dungeonfont.png", 32, 32)
+        .with_font("terminal8x8.png", 8, 8)
+        .with_simple_console(DISPLAY_WIDTH, DISPLAY_HEIGHT, "dungeonfont.png")
+        .with_simple_console_no_bg(DISPLAY_WIDTH, DISPLAY_HEIGHT, "dungeonfont.png")
+        .with_simple_console_no_bg(SCREEN_WIDTH * 2, SCREEN_HEIGHT * 2, "terminal8x8.png")
         .build()?;
 
     main_loop(context, State::new())

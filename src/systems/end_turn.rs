@@ -9,15 +9,14 @@ pub fn end_turn(ecs: &SubWorld, #[resource] turn_state: &mut TurnState) {
     let mut player = <(&Health, &Point)>::query().filter(component::<Player>());
     let mut amulet = <&Point>::query().filter(component::<AmuletOfYala>());
     let current_state = turn_state.clone();
-
-    let amulet_pos = amulet.iter(ecs).nth(0).unwrap();
-
     let mut new_state = match current_state {
         TurnState::AwaitingInput => return,
         TurnState::PlayerTurn => TurnState::MonsterTurn,
         TurnState::MonsterTurn => TurnState::AwaitingInput,
         _ => current_state,
     };
+
+    let amulet_pos = amulet.iter(ecs).nth(0).unwrap();
 
     player.iter(ecs).for_each(|(hp, pos)| {
         if hp.current < 1 {
@@ -29,5 +28,5 @@ pub fn end_turn(ecs: &SubWorld, #[resource] turn_state: &mut TurnState) {
         }
     });
 
-    *turn_state = new_state
+    *turn_state = new_state;
 }

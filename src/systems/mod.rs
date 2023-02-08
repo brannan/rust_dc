@@ -1,7 +1,6 @@
 use crate::prelude::*;
 
 mod chasing;
-mod collisions;
 mod combat;
 mod end_turn;
 mod entity_render;
