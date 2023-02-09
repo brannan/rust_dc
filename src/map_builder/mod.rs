@@ -38,16 +38,7 @@ impl MapBuilder {
             &self.map,
             1024.0,
         );
-        println!("player start: {:?}", self.player_start);
         const UNREACHABLE: &f32 = &f32::MAX;
-        let filtered: Vec<_> = dijkstra_map.map.iter()
-            .enumerate()
-            .filter(|(_, dist)| {
-                println!("dist: {:?}", *dist);
-                *dist < UNREACHABLE
-            })
-            .collect();
-        println!("filtered: {:?}", filtered);
         self.map.index_to_point2d(
             dijkstra_map
                 .map
