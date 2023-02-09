@@ -1,5 +1,5 @@
-use crate::prelude::*;
 use super::MapArchitect;
+use crate::prelude::*;
 
 pub struct CellularAutomataArchitect {}
 
@@ -12,7 +12,6 @@ impl MapArchitect for CellularAutomataArchitect {
             player_start: Point::zero(),
             amulet_start: Point::zero(),
         };
-
         self.random_noise_map(rng, &mut mb.map);
         for _ in 0..10 {
             self.iteration(&mut mb.map);
@@ -26,65 +25,74 @@ impl MapArchitect for CellularAutomataArchitect {
 }
 
 impl CellularAutomataArchitect {
-    fn random_noise_map(
-        &mut self, 
-        rng: &mut RandomNumberGenerator, 
-        map: &mut Map) {
+    fn random_noise_map(&mut self, rng: &mut RandomNumberGenerator, map: &mut Map) {
         map.tiles.iter_mut().for_each(|t| {
-            let roll = rng.range(0, 100);
+            // (1)
+            let roll = rng.range(0, 100); // (2)
             if roll > 55 {
-                *t = TileType::Floor;
+                // (3)
+                *t = TileType::Floor; // (4)
             } else {
                 *t = TileType::Wall;
             }
         });
     }
 
-    fn count_neigbors(&self, x: i32, y: i32, map: &Map) -> usize {
-        let mut neigbors = 0;
+    fn count_neighbors(&self, x: i32, y: i32, map: &Map) -> usize {
+        let mut neighbors = 0;
         for iy in -1..=1 {
             for ix in -1..=1 {
-                if !(ix == 0 && iy == 0) && map.tiles[map_idx(x + ix, y + ix)] == TileType::Wall {
-                    neigbors += 1;
+                if !(ix==0 && iy == 0) &&// (5)
+                    map.tiles[map_idx(x+ix, y+iy)] == TileType::Wall
+                {
+                    neighbors += 1;
                 }
             }
         }
-        neigbors
+
+        neighbors
     }
 
     fn iteration(&mut self, map: &mut Map) {
-        let mut new_tiles = map.tiles.clone();
-        // iterates all tiles except for edges
+        let mut new_tiles = map.tiles.clone(); // (6)
         for y in 1..SCREEN_HEIGHT - 1 {
+            // (7)
             for x in 1..SCREEN_WIDTH - 1 {
-                let neigbors = self.count_neigbors(x, y, map);
+                let neighbors = self.count_neighbors(x, y, map); // (8)
                 let idx = map_idx(x, y);
-                if neigbors > 4 || neigbors == 0 {
+                if neighbors > 4 || neighbors == 0 {
+                    // (9)
                     new_tiles[idx] = TileType::Wall;
                 } else {
                     new_tiles[idx] = TileType::Floor;
                 }
             }
         }
-        map.tiles = new_tiles
+        map.tiles = new_tiles;
     }
 
     fn find_start(&self, map: &Map) -> Point {
-        let center = Point::new(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+        let center = Point::new(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2); // (10)
         let closest_point = map
             .tiles
-            .iter()
-            .enumerate()
-            .filter(|(_, t)| **t == TileType::Floor)
+            .iter() // (11)
+            .enumerate() // (12)
+            .filter(|(_, t)| **t == TileType::Floor) // (13)
             .map(|(idx, _)| {
                 (
                     idx,
-                    DistanceAlg::Pythagoras.distance2d(center, map.index_to_point2d(idx)),
+                    DistanceAlg::Pythagoras.distance2d(
+                        // (14)
+                        center,
+                        map.index_to_point2d(idx),
+                    ),
                 )
             })
-            .min_by(|(_, distance), (_, distance2)| distance.partial_cmp(&distance2).unwrap())
-            .map(|(idx, _)| idx)
-            .unwrap();
-        map.index_to_point2d(closest_point)
+            .min_by(
+                |(_, distance), (_, distance2)| distance.partial_cmp(&distance2).unwrap(), // (15)
+            )
+            .map(|(idx, _)| idx) // (16)
+            .unwrap(); // (17)
+        map.index_to_point2d(closest_point) // (18)
     }
 }
