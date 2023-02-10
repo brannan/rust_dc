@@ -18,9 +18,8 @@ const FORTRESS: (&str, i32, i32) = (
     11,
 );
 
-pub fn apply_prefab(mb: &mut MapBuilder, rng: &mut RandomNumberGenerator) {
+fn find_place_for_prefab(mb: &mut MapBuilder, rng: &mut RandomNumberGenerator) -> Option<Point> {
     let mut placement = None;
-
     let dijkstra_map = DijkstraMap::new(
         SCREEN_WIDTH,
         SCREEN_HEIGHT,
@@ -28,7 +27,6 @@ pub fn apply_prefab(mb: &mut MapBuilder, rng: &mut RandomNumberGenerator) {
         &mb.map,
         1024.0,
     );
-
     let mut attempts = 0;
     while placement.is_none() && attempts < 10 {
         let dimensions = Rect::with_size(
@@ -54,30 +52,40 @@ pub fn apply_prefab(mb: &mut MapBuilder, rng: &mut RandomNumberGenerator) {
         }
         attempts += 1;
     }
+    placement
+}
 
-    if let Some(placement) = placement {
-        let string_vec: Vec<_> = FORTRESS.0
-            .chars().filter(|a| *a != '\r' && *a != '\n')
-            .collect();
+fn place_prefab(placement: &Point, mb: &mut MapBuilder) {
 
-        let mut i = 0;
-        for ty in placement.y .. placement.y + FORTRESS.2 {
-            for tx in placement.x .. placement.x + FORTRESS.1 {
-                let idx = map_idx(tx, ty);
-                let c = string_vec[i];
-                match c {
-                    'M' => {
-                        mb.map.tiles[idx] = TileType::Floor;
-                        mb.monster_spawns.push(Point::new(tx, ty));
-                    }
-                    '-' => mb.map.tiles[idx] = TileType::Floor,
-                    '#' => mb.map.tiles[idx] = TileType::Wall,
-                    _   => println!("Don't know what to do with '[{}]'", c)
+    let string_vec: Vec<_> = FORTRESS.0
+        .chars().filter(|a| *a != '\r' && *a != '\n')
+        .collect();
+
+    let mut i = 0;
+    for ty in placement.y .. placement.y + FORTRESS.2 {
+        for tx in placement.x .. placement.x + FORTRESS.1 {
+            let idx = map_idx(tx, ty);
+            let c = string_vec[i];
+            match c {
+                'M' => {
+                    mb.map.tiles[idx] = TileType::Floor;
+                    mb.monster_spawns.push(Point::new(tx, ty));
                 }
-                i += 1;
+                '-' => mb.map.tiles[idx] = TileType::Floor,
+                '#' => mb.map.tiles[idx] = TileType::Wall,
+                _   => println!("Don't know what to do with '[{}]'", c)
             }
+            i += 1;
         }
-        println!("prefab at ({}, {})", placement.x, placement.y);
+    }
+}
+
+pub fn apply_prefab(mb: &mut MapBuilder, rng: &mut RandomNumberGenerator) {
+    let placement = find_place_for_prefab(mb, rng);
+
+    if let Some(point) = placement {
+        place_prefab(&point, mb);
+        println!("prefab at ({}, {})", point.x, point.y);
     } else {
         println!("prefab not placed");
     }
