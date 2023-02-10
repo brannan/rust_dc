@@ -3,6 +3,8 @@ mod rooms;
 use rooms::RoomsArchitect;
 mod drunkard;
 use drunkard::DrunkardsWalkArchitect;
+mod prefab;
+use prefab::apply_prefab;
 
 use self::automata::CellularAutomataArchitect;
 mod automata;
@@ -23,11 +25,13 @@ pub struct MapBuilder {
 impl MapBuilder {
     pub fn new(rng: &mut RandomNumberGenerator) -> Self {
         let mut architect: Box<dyn MapArchitect> = match rng.range(0, 3) {
-            0 => Box::new(DrunkardsWalkArchitect{}),
-            1 => Box::new(RoomsArchitect{}),
-            _ => Box::new(CellularAutomataArchitect{}),
+            0 => Box::new(DrunkardsWalkArchitect {}),
+            1 => Box::new(RoomsArchitect {}),
+            _ => Box::new(CellularAutomataArchitect {}),
         };
-        architect.new(rng)
+        let mut mb = architect.new(rng);
+        apply_prefab(&mut mb, rng);
+        mb
     }
 
     fn fill(&mut self, tile: TileType) {

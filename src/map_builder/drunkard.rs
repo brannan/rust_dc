@@ -100,8 +100,8 @@ mod tests {
     fn test_drunkard() {
         let mb = make_map_builder();
         let tile_count = mb.map.tiles.len();
-        assert_eq!(tile_count, (SCREEN_WIDTH*SCREEN_HEIGHT) as usize);
-        
+        assert_eq!(tile_count, (SCREEN_WIDTH * SCREEN_HEIGHT) as usize);
+
         // to see ouput: cargo test -- --nocapture drunkard
         println!("{:#?}", mb.map);
     }

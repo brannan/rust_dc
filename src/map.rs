@@ -99,7 +99,6 @@ impl BaseMap for Map {
 }
 
 impl Debug for Map {
-
     /// This just prints the map. Not the player or monsters
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut lines = String::new();
