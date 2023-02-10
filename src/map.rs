@@ -1,3 +1,5 @@
+use std::fmt::Debug;
+
 use crate::prelude::*;
 
 const NUM_TILES: usize = (SCREEN_WIDTH * SCREEN_HEIGHT) as usize;
@@ -93,5 +95,28 @@ impl BaseMap for Map {
 
     fn is_opaque(&self, idx: usize) -> bool {
         self.tiles[idx as usize] != TileType::Floor
+    }
+}
+
+impl Debug for Map {
+
+    /// This just prints the map. Not the player or monsters
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut lines = String::new();
+        for y in 0..SCREEN_HEIGHT {
+            for x in 0..SCREEN_WIDTH {
+                let idx = map_idx(x, y);
+                match self.tiles[idx] {
+                    TileType::Floor => {
+                        lines.push('.');
+                    }
+                    TileType::Wall => {
+                        lines.push('#');
+                    }
+                }
+            }
+            lines.push('\n');
+        }
+        write!(f, "{}", lines)
     }
 }
