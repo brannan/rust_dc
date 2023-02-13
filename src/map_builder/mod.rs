@@ -5,8 +5,9 @@ mod drunkard;
 use drunkard::DrunkardsWalkArchitect;
 mod prefab;
 use prefab::apply_prefab;
+mod themes;
 
-use self::automata::CellularAutomataArchitect;
+use self::{automata::CellularAutomataArchitect, themes::{DungeonTheme, ForestTheme}};
 mod automata;
 
 trait MapArchitect {
@@ -20,6 +21,7 @@ pub struct MapBuilder {
     pub player_start: Point,
     pub monster_spawns: Vec<Point>,
     pub amulet_start: Point,
+    pub theme: Box<dyn MapTheme>,
 }
 
 impl MapBuilder {
@@ -31,6 +33,12 @@ impl MapBuilder {
         };
         let mut mb = architect.new(rng);
         apply_prefab(&mut mb, rng);
+
+        mb.theme = match rng.range(0,2) {
+            0 => DungeonTheme::new(),
+            _ => ForestTheme::new()
+        };
+
         mb
     }
 
@@ -145,4 +153,8 @@ impl MapBuilder {
         }
         spawns
     }
+}
+
+pub trait MapTheme: Sync + Send {
+    fn tile_to_render(&self, tile_type: TileType) -> FontCharType;
 }
