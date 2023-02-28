@@ -56,14 +56,15 @@ fn find_place_for_prefab(mb: &mut MapBuilder, rng: &mut RandomNumberGenerator) -
 }
 
 fn place_prefab(placement: &Point, mb: &mut MapBuilder) {
-
-    let string_vec: Vec<_> = FORTRESS.0
-        .chars().filter(|a| *a != '\r' && *a != '\n')
+    let string_vec: Vec<_> = FORTRESS
+        .0
+        .chars()
+        .filter(|a| *a != '\r' && *a != '\n')
         .collect();
 
     let mut i = 0;
-    for ty in placement.y .. placement.y + FORTRESS.2 {
-        for tx in placement.x .. placement.x + FORTRESS.1 {
+    for ty in placement.y..placement.y + FORTRESS.2 {
+        for tx in placement.x..placement.x + FORTRESS.1 {
             let idx = map_idx(tx, ty);
             let c = string_vec[i];
             match c {
@@ -73,7 +74,7 @@ fn place_prefab(placement: &Point, mb: &mut MapBuilder) {
                 }
                 '-' => mb.map.tiles[idx] = TileType::Floor,
                 '#' => mb.map.tiles[idx] = TileType::Wall,
-                _   => println!("Don't know what to do with '[{}]'", c)
+                _ => println!("Don't know what to do with '[{}]'", c),
             }
             i += 1;
         }
